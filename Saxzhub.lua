@@ -18,7 +18,7 @@ local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
-local ConfigFileName = "Saxzhub_Config.json"
+local ConfigFileName = "Saxzhub_MM2_Config.json"
 local CustomSoundId = "rbxassetid://4499400560"
 
 -- ==============================================================================
@@ -605,7 +605,7 @@ local function ApplyThemeToGUI()
     
     if NotifyContainer then
         for _, notify in ipairs(NotifyContainer:GetDescendants()) do
-            if notify:IsA("TextLabel") and notify.Text == "NEXUS MM2" then
+            if notify:IsA("TextLabel") and notify.Text == "Saxzhub MM2" then
                 notify.TextColor3 = Theme.Accent
             elseif notify:IsA("Frame") and notify:FindFirstChildOfClass("UIStroke") then
                 notify.BackgroundColor3 = Theme.Sidebar
@@ -818,7 +818,7 @@ NotifyLayout.SortOrder = Enum.SortOrder.LayoutOrder
 NotifyLayout.VerticalAlignment = Enum.VerticalAlignment.Top
 NotifyLayout.Padding = UDim.new(0, 8)
 
-local function NexusNotify(title, text, duration)
+local function SaxzhubNotify(title, text, duration)
     notifyOrder = notifyOrder - 1
 
     local Frame = Instance.new("Frame")
@@ -1576,7 +1576,7 @@ end
 
 local function StartFling(targetRoleOrPlayer)
     if flingInProgress then
-        NexusNotify("FLING", "Aguarde, o fling está em andamento!", 3)
+        SaxzhubNotify("FLING", "Aguarde, o fling está em andamento!", 3)
         return
     end
     
@@ -1627,7 +1627,7 @@ end
 local function ToggleFling(roleName)
     PlayClickSound()
     if flingInProgress then
-        NexusNotify("FLING", "Aguarde, o fling está em andamento!", 3)
+        SaxzhubNotify("FLING", "Aguarde, o fling está em andamento!", 3)
         return
     end
     if (roleName == "Sheriff" and Config.FlingSheriff) or
@@ -1650,7 +1650,7 @@ end
 local function ToggleFlingAll()
     PlayClickSound()
     if flingInProgress then
-        NexusNotify("FLING", "Aguarde, o fling está em andamento!", 3)
+        SaxzhubNotify("FLING", "Aguarde, o fling está em andamento!", 3)
         return
     end
     if Config.FlingAll then
@@ -1665,12 +1665,12 @@ end
 local function ToggleFlingPlayer(playerName)
     PlayClickSound()
     if flingInProgress then
-        NexusNotify("FLING", "Aguarde, o fling está em andamento!", 3)
+        SaxzhubNotify("FLING", "Aguarde, o fling está em andamento!", 3)
         return
     end
     local plr = Players:FindFirstChild(playerName)
     if not plr then
-        NexusNotify("FLING", "Player not found!", 3)
+        SaxzhubNotify("FLING", "Player not found!", 3)
         return
     end
 
@@ -1698,7 +1698,7 @@ ShootButton.BackgroundTransparency = 0.5
 ShootButton.Position = UDim2.new(0.65, 0, 0.6, 0)
 ShootButton.Size = UDim2.new(0, 220, 0, 80)
 ShootButton.Font = Enum.Font.GothamBold
-ShootButton.Text = "NEXUS AIM"
+ShootButton.Text = "Saxzhub AIM"
 ShootButton.TextColor3 = Theme.Accent
 ShootButton.TextSize = 24
 ShootButton.AutoButtonColor = false
@@ -1754,7 +1754,7 @@ local function PerformSilentAimMouse()
         ShootStroke.Color = Color3.fromRGB(255, 50, 50)
         
         task.delay(0.2, function()
-            ShootButton.Text = "NEXUS AIM"
+            ShootButton.Text = "Saxzhub AIM"
             ShootStroke.Color = Theme.Accent
         end)
     else
@@ -1762,7 +1762,7 @@ local function PerformSilentAimMouse()
         ShootStroke.Color = Color3.fromRGB(255, 50, 50)
         
         task.delay(0.5, function()
-            ShootButton.Text = "NEXUS AIM"
+            ShootButton.Text = "Saxzhub AIM"
             ShootStroke.Color = Theme.Accent
         end)
     end
@@ -1897,7 +1897,7 @@ task.spawn(function()
                 end
                 
                 if m ~= "None" then
-                    NexusNotify("ROLES REVEALED", "Murderer: " .. m .. "\nSheriff: " .. s, 5)
+                    SaxzhubNotify("ROLES REVEALED", "Murderer: " .. m .. "\nSheriff: " .. s, 5)
                     rolesNotified = true
                 end
             end
@@ -1927,7 +1927,7 @@ task.spawn(function()
 
         if dropped and not wasGunDropped then
             if Config.NotifyGunDrop then
-                NexusNotify("GUN DROPPED", "The gun has been dropped on the map!", 4)
+                SaxzhubNotify("GUN DROPPED", "The gun has been dropped on the map!", 4)
             end
         end
         
@@ -1936,7 +1936,7 @@ task.spawn(function()
             for _, p in ipairs(Players:GetPlayers()) do
                 local char = p.Character
                 if char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver") or (p.Backpack and (p.Backpack:FindFirstChild("Gun") or p.Backpack:FindFirstChild("Revolver")))) then
-                    NexusNotify("GUN TAKEN", p.Name .. " picked up the gun!", 4)
+                    SaxzhubNotify("GUN TAKEN", p.Name .. " picked up the gun!", 4)
                     break
                 end
             end
@@ -2175,7 +2175,7 @@ end
 -- ==============================================================================
 local function KillAll()
     if RoleCache[LocalPlayer.Name] ~= "Murderer" then
-        NexusNotify("KILL ALL", "You must be the Murderer to use this!", 3)
+        SaxzhubNotify("KILL ALL", "You must be the Murderer to use this!", 3)
         return
     end
     
@@ -2217,12 +2217,12 @@ local function KillAll()
         end
         
         if killed > 0 then
-            NexusNotify("KILL ALL", "Attempted to kill " .. killed .. " players.", 3)
+            SaxzhubNotify("KILL ALL", "Attempted to kill " .. killed .. " players.", 3)
         else
-            NexusNotify("KILL ALL", "No valid targets found.", 3)
+            SaxzhubNotify("KILL ALL", "No valid targets found.", 3)
         end
     else
-        NexusNotify("KILL ALL", "You need a knife!", 3)
+        SaxzhubNotify("KILL ALL", "You need a knife!", 3)
     end
 end
 
@@ -2328,10 +2328,10 @@ local function UpdateESP()
                 showDist = Config.Lobby_Dist
             end
             
-            local holder = plr.Character:FindFirstChild("NexusESP_Holder")
+            local holder = plr.Character:FindFirstChild("SaxzhubESP_Holder")
             if not holder then
                 holder = Instance.new("Folder", plr.Character)
-                holder.Name = "NexusESP_Holder"
+                holder.Name = "SaxzhubESP_Holder"
             end
             
             local hl = holder:FindFirstChild("Highlight")
@@ -2423,10 +2423,10 @@ local function UpdateESP()
     
     -- ESP para Gun Drop
     if foundGunDrop then
-        local holder = foundGunDrop:FindFirstChild("NexusESP_Holder")
+        local holder = foundGunDrop:FindFirstChild("SaxzhubESP_Holder")
         if not holder then
             holder = Instance.new("Folder", foundGunDrop)
-            holder.Name = "NexusESP_Holder"
+            holder.Name = "SaxzhubESP_Holder"
         end
         
         local hl = holder:FindFirstChild("Highlight")
@@ -2692,7 +2692,7 @@ local function createModernGhost(cframe)
     local ghostColor = Theme.Ghost
     
     local ghost = Instance.new("Part")
-    ghost.Name = "NexusDesyncGhost"
+    ghost.Name = "SaxzhubDesyncGhost"
     ghost.Size = Vector3.new(4, 6, 4)
     ghost.Shape = Enum.PartType.Cylinder
     ghost.CFrame = cframe * CFrame.Angles(0, 0, math.rad(90))
@@ -2748,7 +2748,7 @@ local function ToggleDesync()
         desyncChair = Instance.new('Seat', Workspace)
         desyncChair.Anchored = false
         desyncChair.CanCollide = false
-        desyncChair.Name = 'NexusDesyncChair'
+        desyncChair.Name = 'SaxzhubDesyncChair'
         desyncChair.Transparency = 1
         desyncChair.CFrame = originalCFrame
         
@@ -2768,7 +2768,7 @@ local function ToggleDesync()
         DesyncBtn.TextColor3 = Color3.fromRGB(0, 255, 150)
         DesyncStroke.Color = Color3.fromRGB(0, 255, 150)
         
-        NexusNotify("DESYNC", "Fake Position Enabled!", 3)
+        SaxzhubNotify("DESYNC", "Fake Position Enabled!", 3)
     else
         if desyncChair then 
             desyncChair:Destroy() 
@@ -2789,7 +2789,7 @@ local function ToggleDesync()
         DesyncBtn.TextColor3 = Theme.Ghost
         DesyncStroke.Color = Theme.Ghost
         
-        NexusNotify("DESYNC", "Fake Position Disabled!", 3)
+        SaxzhubNotify("DESYNC", "Fake Position Disabled!", 3)
     end
 end
 
@@ -2798,7 +2798,7 @@ DesyncBtn.MouseButton1Click:Connect(ToggleDesync)
 LocalPlayer.CharacterAdded:Connect(function(character)
     task.wait(0.5)
     
-    local desyncChair = Workspace:FindFirstChild('NexusDesyncChair')
+    local desyncChair = Workspace:FindFirstChild('SaxzhubDesyncChair')
     if desyncChair then desyncChair:Destroy() end
     
     if ghostPart then ghostPart:Destroy() ghostPart = nil end
@@ -2882,7 +2882,7 @@ local function onInputBeganAntiSilent(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode[Config.AntiSilentAimKey] then
         Config.AntiSilentAim = not Config.AntiSilentAim
-        NexusNotify("ANTI SILENT AIM", Config.AntiSilentAim and "Ativado" or "Desativado", 2)
+        SaxzhubNotify("ANTI SILENT AIM", Config.AntiSilentAim and "Ativado" or "Desativado", 2)
     elseif input.KeyCode == Enum.KeyCode.Equal then -- tecla "="
         game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
     end
@@ -2931,7 +2931,7 @@ ScreenGui.Destroying:Connect(function()
         optimizerCoinsConn = nil
     end
     
-    local desyncChair = Workspace:FindFirstChild('NexusDesyncChair')
+    local desyncChair = Workspace:FindFirstChild('SaxzhubDesyncChair')
     if desyncChair then desyncChair:Destroy() end
     
     if ghostPart then ghostPart:Destroy() ghostPart = nil end
@@ -3018,7 +3018,7 @@ TitleLabel = Instance.new("TextLabel")
 TitleLabel.Parent = Sidebar
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "NEXUS MM2"
+TitleLabel.Text = "Saxzhub MM2"
 TitleLabel.TextColor3 = Theme.Accent
 TitleLabel.Font = Enum.Font.GothamBlack
 TitleLabel.TextSize = 14
@@ -3263,7 +3263,7 @@ local function CreateKeybind(parent, text, defaultVal, callback)
                 
                 connection:Disconnect()
             else
-                NexusNotify("KEYBIND", "Por favor, use um botão de gamepad válido!", 2)
+                SaxzhubNotify("KEYBIND", "Por favor, use um botão de gamepad válido!", 2)
             end
         end
     end)
@@ -3632,7 +3632,7 @@ CreateButton(TabLegit, "FLING SELECTED PLAYER", function(btn, frame)
             btn.TextColor3 = Theme.Accent
         end
     else
-        NexusNotify("FLING", "Select a player first!", 3)
+        SaxzhubNotify("FLING", "Select a player first!", 3)
     end
 end)
 
@@ -3681,19 +3681,19 @@ CreateButton(TabLegit, "TP TO MAP", function()
 
     local map = getMap()
     if not map then 
-        NexusNotify("TELEPORT", "Map not found!", 3)
+        SaxzhubNotify("TELEPORT", "Map not found!", 3)
         return 
     end
 
     local spawns = map:FindFirstChild("Spawns")
     if not spawns then 
-        NexusNotify("TELEPORT", "No spawns found!", 3)
+        SaxzhubNotify("TELEPORT", "No spawns found!", 3)
         return 
     end
 
     local spawnPoints = spawns:GetChildren()
     if #spawnPoints == 0 then 
-        NexusNotify("TELEPORT", "No spawn points!", 3)
+        SaxzhubNotify("TELEPORT", "No spawn points!", 3)
         return 
     end
 
@@ -3701,7 +3701,7 @@ CreateButton(TabLegit, "TP TO MAP", function()
 
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         LocalPlayer.Character:MoveTo(randomSpawn.Position)
-        NexusNotify("TELEPORT", "Teleported to map!", 3)
+        SaxzhubNotify("TELEPORT", "Teleported to map!", 3)
     end
 end)
 
@@ -3828,7 +3828,7 @@ local VersionTitle = Instance.new("TextLabel")
 VersionTitle.Size = UDim2.new(1, -10, 0, 30)
 VersionTitle.Position = UDim2.new(0, 10, 0, 5)
 VersionTitle.BackgroundTransparency = 1
-VersionTitle.Text = "🔄 VERSÃO 3.9 - NEXUS MM2🇧🇷"
+VersionTitle.Text = "🔄 VERSÃO 3.9 - Saxzhub MM2🇧🇷"
 VersionTitle.TextColor3 = Theme.Accent
 VersionTitle.Font = Enum.Font.GothamBlack
 VersionTitle.TextSize = 14
@@ -3855,7 +3855,7 @@ ChangesFrame.Parent = UpdatesLayout
 local ChangesText = Instance.new("TextLabel")
 ChangesText.Size = UDim2.new(1, 0, 1, 0)
 ChangesText.BackgroundTransparency = 1
-ChangesText.Text = "✅ NOVAS FUNÇÕES:\n• 🖼️ Botão com imagem personalizada\n• 🔪 Knife Silent Aim\n• 🎯 Gun Silent Aim\n• 🌀 FLING atualizado (com timeout)\n• ❤️ Second Life (Godmode)\n• 🔝 Notificações sempre no topo\n• 🎯 Tracer para Gun Drop\n• 👻 Tracer para Ghost Part (nativo)\n• 🔄 Nexus Aim desequipa arma\n• 💣 Auto Prank Bomb\n• 🛡️ Anti Silent Aim (Desync alternativo)\n\n🔄 MELHORIAS:\n• ⚡ Otimização geral\n• 🔧 Correção de bugs\n• 🎨 Interface melhorada\n\n⚠️ AVISO:\n• Gun Silent Aim: 100% foco no Murderer\n• Knife Silent Aim: Foco em todos (ignora paredes, mira no centro da tela)\n• Anti Silent Aim ativável por tecla (padrão X) ou pelo menu."
+ChangesText.Text = "✅ NOVAS FUNÇÕES:\n• 🖼️ Botão com imagem personalizada\n• 🔪 Knife Silent Aim\n• 🎯 Gun Silent Aim\n• 🌀 FLING atualizado (com timeout)\n• ❤️ Second Life (Godmode)\n• 🔝 Notificações sempre no topo\n• 🎯 Tracer para Gun Drop\n• 👻 Tracer para Ghost Part (nativo)\n• 🔄 Saxzhub Aim desequipa arma\n• 💣 Auto Prank Bomb\n• 🛡️ Anti Silent Aim (Desync alternativo)\n\n🔄 MELHORIAS:\n• ⚡ Otimização geral\n• 🔧 Correção de bugs\n• 🎨 Interface melhorada\n\n⚠️ AVISO:\n• Gun Silent Aim: 100% foco no Murderer\n• Knife Silent Aim: Foco em todos (ignora paredes, mira no centro da tela)\n• Anti Silent Aim ativável por tecla (padrão X) ou pelo menu."
 ChangesText.TextColor3 = Theme.Text
 ChangesText.Font = Enum.Font.GothamSemibold
 ChangesText.TextSize = 11
@@ -3913,7 +3913,7 @@ AddCorner(ViniBtn, 4)
 
 ViniBtn.MouseButton1Click:Connect(function()
     PlayClickSound()
-    NexusNotify("CRÉDITOS", "Canal do Vini.xits.script copiado!", 3)
+    SaxzhubNotify("CRÉDITOS", "Canal do Vini.xits.script copiado!", 3)
 end)
 
 local ThurFrame = Instance.new("Frame")
@@ -3995,7 +3995,7 @@ AddCorner(YudyBtn, 4)
 
 YudyBtn.MouseButton1Click:Connect(function()
     PlayClickSound()
-    NexusNotify("CRÉDITOS", "Canal do Yudy.xits copiado!", 3)
+    SaxzhubNotify("CRÉDITOS", "Canal do Yudy.xits copiado!", 3)
 end)
 
 local SevenFrame = Instance.new("Frame")
@@ -4072,7 +4072,7 @@ AddCorner(ChicoBtn, 4)
 
 ChicoBtn.MouseButton1Click:Connect(function()
     PlayClickSound()
-    NexusNotify("CRÉDITOS", "Canal do ChicoDisigner.xits copiado!", 3)
+    SaxzhubNotify("CRÉDITOS", "Canal do ChicoDisigner.xits copiado!", 3)
     setclipboard("https://youtube.com/@chicolau200?si=Q75i7wbkJonJ6Op7")
 end)
 
@@ -4089,7 +4089,7 @@ local FinalThanksLabel = Instance.new("TextLabel")
 FinalThanksLabel.Size = UDim2.new(1, -10, 0, 40)
 FinalThanksLabel.Position = UDim2.new(0, 0, 0, 550)
 FinalThanksLabel.BackgroundTransparency = 1
-FinalThanksLabel.Text = "E também obrigado a todos que usam o Nexus Hub ❤"
+FinalThanksLabel.Text = "E também obrigado a todos que usam o Saxzhub ❤"
 FinalThanksLabel.TextColor3 = Color3.fromRGB(255, 105, 180)
 FinalThanksLabel.Font = Enum.Font.GothamBold
 FinalThanksLabel.TextSize = 13
@@ -4101,7 +4101,7 @@ local ThanksLabel = Instance.new("TextLabel")
 ThanksLabel.Size = UDim2.new(1, -10, 0, 60)
 ThanksLabel.Position = UDim2.new(0, 0, 0, 600)
 ThanksLabel.BackgroundTransparency = 1
-ThanksLabel.Text = "Obrigado por usar o Nexus Hub MM2!\nSe divirta 😋"
+ThanksLabel.Text = "Obrigado por usar o Saxzhub MM2!\nSe divirta 😋"
 ThanksLabel.TextColor3 = Theme.TextDim
 ThanksLabel.Font = Enum.Font.GothamSemibold
 ThanksLabel.TextSize = 12
@@ -4353,10 +4353,10 @@ local function SaveConfig(btnLabel, btnFrame)
                     btnLabel.TextColor3 = Theme.Accent
                 end)
             end
-            NexusNotify("ERROR", "Failed to save configuration!", 3)
+            SaxzhubNotify("ERROR", "Failed to save configuration!", 3)
         end
     else
-        NexusNotify("ERROR", "writefile not available!", 3)
+        SaxzhubNotify("ERROR", "writefile not available!", 3)
     end
 end
 
@@ -4381,7 +4381,7 @@ CreateButton(TabSettings, "RESET SETTINGS", function(btn, frame)
     task.delay(1, function()
         btn.Text = "RESET SETTINGS"
         btn.TextColor3 = Theme.Accent
-        NexusNotify("RESET", "Settings reset!", 5)
+        SaxzhubNotify("RESET", "Settings reset!", 5)
     end)
 end)
 
@@ -4627,7 +4627,7 @@ task.spawn(function()
 end)
 
 task.wait(1)
-NexusNotify("NEXUS HUB MM2 V3.9",
+SaxzhubNotify("Saxzhub MM2 V3.9",
     "✅ Script carregado com sucesso!\n\n" ..
     "🎯 NOVAS FUNÇÕES:\n" ..
     "• 🖼️ Botão com imagem personalizada\n" ..
@@ -4638,7 +4638,7 @@ NexusNotify("NEXUS HUB MM2 V3.9",
     "• 🔝 Notificações sempre no topo\n" ..
     "• 🎯 Tracer para Gun Drop\n" ..
     "• 👻 Tracer para Ghost Part (nativo)\n" ..
-    "• 🔄 Nexus Aim desequipa tool\n" ..
+    "• 🔄 Saxzhub Aim desequipa tool\n" ..
     "• 💣 Auto Prank Bomb\n" ..
     "• 📍 TP Map corrigido\n" ..
     "• 👣 Disable Footstep\n" ..
