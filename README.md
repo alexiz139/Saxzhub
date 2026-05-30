@@ -1,1 +1,1 @@
-# Saxzhub\n\nScript para Roblox - Versión 1.0\n\n## Créditos\n- Owner: alexiz139\n- Dev: alexiz139
+# Saxzhub\n\nScript para Roblox - Versión 1.0\n\n## Scripts Disponibles\n\n### Murder Mystery 2 (MM2)\n```lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/alexiz139/Saxzhub/main/Saxzhub_MM2.lua"))()\n```\n\n### Duels (Asesinos vs Sheriffs)\n```lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/alexiz139/Saxzhub/main/Saxzhub_Duels.lua"))()\n```\n\n## Créditos\n- Owner: alexiz139\n- Dev: alexiz139

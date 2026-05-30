@@ -1,5 +1,5 @@
 --[[ 
-    Saxzhub Script
+    Saxzhub MM2 Script
     Owner: alexiz139
     Credits: alexiz139
 ]]
