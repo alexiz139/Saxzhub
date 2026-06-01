@@ -159,7 +159,7 @@ local IntroText = New('TextLabel', { Size = UDim2.new(0, 200, 0, 50), AnchorPoin
 
 task.spawn(function()
     print('Saxzhub: Iniciando Intro...')
-    task.wait(3)
+    task.wait(4)
     TW(IntroFrame, 1, { BackgroundTransparency = 1 })
     TW(IntroLogo, 1, { ImageTransparency = 1 })
     TW(IntroText, 1, { TextTransparency = 1 })
