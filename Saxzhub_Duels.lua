@@ -1,5 +1,5 @@
 --[[ 
-    Saxzhub Duels Script + Skins
+    Saxzhub Duels Script + Skins (Fixed)
     Owner: alexiz139
     Credits: alexiz139
 ]]
@@ -258,6 +258,48 @@ New("UIListLayout", { FillDirection = Enum.FillDirection.Vertical, Padding = UDi
 New("UIPadding", { PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10), PaddingLeft = UDim.new(0, 5), PaddingRight = UDim.new(0, 5), Parent = sidebar })
 
 
+local floatIcon = New("ImageButton", {
+    Name = "FloatIcon",
+    Size = UDim2.new(0, 50, 0, 50),
+    Position = UDim2.new(0, 10, 0.5, -25),
+    Image = "rbxassetid://83175093174782",
+    BackgroundColor3 = T.bg,
+    Visible = false,
+    ZIndex = 50,
+    Parent = GUI
+})
+Cor(floatIcon, 25)
+New("UIStroke", { Color = T.acc, Thickness = 2, Parent = floatIcon })
+
+local function toggle()
+    winMain.Visible = not winMain.Visible
+end
+floatIcon.MouseButton1Click:Connect(toggle)
+closeX.MouseButton1Click:Connect(toggle)
+
+-- Drag para el icono flotante
+local draggingIcon = false
+local dragInput, dragStart, startPos
+floatIcon.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingIcon = true
+        dragStart = input.Position
+        startPos = floatIcon.Position
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if draggingIcon and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        floatIcon.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingIcon = false
+    end
+end)
+
+
 local skinsTab = newPage("Skins")
 local skinsSec = Sec(skinsTab, "Visuales Pro")
 
@@ -269,7 +311,7 @@ Btn(skinsSec, "Activar Headless", function()
     ApplyHeadless()
 end)
 
--- Sidebar Button for Skins
+-- Botón en Sidebar para Skins
 local skinsBtn = New("TextButton", {
     Size = UDim2.new(1, 0, 0, 40),
     BackgroundColor3 = T.panel,
