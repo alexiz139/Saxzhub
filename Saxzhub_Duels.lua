@@ -1,26 +1,7 @@
 --[[ 
-    Saxzhub Duels Script + Skins (Fixed)
+    Saxzhub Duels Script + Skins (Rebuilt)
     Owner: alexiz139
     Credits: alexiz139
-]]
-
---[[
-========================================
-
-╔════════════════════════╗
-║          Saxzhub        ║ Owner          ║
-╚════════════════════════╝
-
-Script Edited for Saxzhub
-Version: 1.0 + Intro
-
-Owner: Saxzhub
-Creadores:
-- Creador: ForceDev
-- Dev: Saxzhub
-
-========================================
-
 ]]
 
 local Players          = game:GetService("Players")
@@ -118,7 +99,6 @@ local function ApplyHeadless()
         if char.Head:FindFirstChild("face") then char.Head.face.Transparency = 1 end
     end
 end
-
 -- GUI PRINCIPAL
 local GUI = New("ScreenGui", {
     Name = "Saxzhub_GUI",
@@ -257,7 +237,15 @@ local sidebar = New("ScrollingFrame", {
 New("UIListLayout", { FillDirection = Enum.FillDirection.Vertical, Padding = UDim.new(0, 18), SortOrder = Enum.SortOrder.LayoutOrder, Parent = sidebar })
 New("UIPadding", { PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10), PaddingLeft = UDim.new(0, 5), PaddingRight = UDim.new(0, 5), Parent = sidebar })
 
+local contentArea = New("Frame", {
+    Position = UDim2.new(0, T.tabSize + 25, 0, 58),
+    Size = UDim2.new(1, -(T.tabSize + 25), 1, -66),
+    BackgroundTransparency = 1,
+    Parent = winMain
+})
 
+
+-- ICONO FLOTANTE
 local floatIcon = New("ImageButton", {
     Name = "FloatIcon",
     Size = UDim2.new(0, 50, 0, 50),
@@ -298,42 +286,6 @@ UserInputService.InputEnded:Connect(function(input)
         draggingIcon = false
     end
 end)
-
-
-local skinsTab = newPage("Skins")
-local skinsSec = Sec(skinsTab, "Visuales Pro")
-
-Btn(skinsSec, "Activar Korblox (Derecha)", function()
-    ApplyKorblox()
-end)
-
-Btn(skinsSec, "Activar Headless", function()
-    ApplyHeadless()
-end)
-
--- Botón en Sidebar para Skins
-local skinsBtn = New("TextButton", {
-    Size = UDim2.new(1, 0, 0, 40),
-    BackgroundColor3 = T.panel,
-    Text = "SKINS",
-    TextColor3 = T.text,
-    Font = Enum.Font.GothamBold,
-    TextSize = 14,
-    Parent = sidebar
-})
-Cor(skinsBtn, 8)
-skinsBtn.MouseButton1Click:Connect(function()
-    for _, p in pairs(pages) do p.Visible = false end
-    pages["Skins"].Visible = true
-end)
-
-local contentArea = New("Frame", {
-    Position = UDim2.new(0, T.tabSize + 25, 0, 58),
-    Size = UDim2.new(1, -(T.tabSize + 25), 1, -66),
-    BackgroundTransparency = 1,
-    Parent = winMain
-})
-
 local clickSound = Instance.new("Sound")
 clickSound.SoundId = "rbxassetid://4590657391"
 clickSound.Volume = 1
@@ -549,52 +501,61 @@ local function createCyberLabel(txt,isTitle)
     local lbl = New("TextLabel",{ Size = UDim2.new(1,0,0,isTitle and 28 or 18), BackgroundTransparency = 1, Text = txt, TextColor3 = isTitle and T.acc or T.text, Font = isTitle and Enum.Font.GothamBlack or Enum.Font.GothamMedium, TextSize = isTitle and 16 or 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = creditsPanel })
     if isTitle then New("Frame", { Size = UDim2.new(0.5, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = T.acc, BorderSizePixel = 0, Parent = lbl }) end 
 end
-createCyberLabel("OWNER",true); createCyberLabel("Saxzhub",false); createCyberLabel("CREADORES",true); createCyberLabel("Creador > ForceDev",false); createCyberLabel("Dev > Saxzhub",false)
 
-local function addTab(name, iconId)
-    local btn = New("TextButton", { Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = T.panel, Text = "", Parent = sidebar })
-    Cor(btn, 10)
-    local btnStroke = New("UIStroke", { Color = Color3.fromRGB(0,0,0), Thickness = 2, Parent = btn })
-    local icon = New("ImageLabel", { Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), BackgroundTransparency = 1, Image = iconId, ImageColor3 = T.muted, ZIndex = 2, Parent = btn })
-    local lbl = New("TextLabel", { Size = UDim2.new(1, -45, 1, 0), Position = UDim2.new(0, 42, 0, 0), BackgroundTransparency = 1, Text = name, TextColor3 = T.muted, Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 2, Parent = btn })
+-- CREACIÓN DE PÁGINAS
+local infoPage = newPage("Info")
+local infoSec = Sec(infoPage, "Información")
+New("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 80),
+    BackgroundTransparency = 1,
+    Text = "Bienvenido a Saxzhub\nOwner: alexiz139\nDisfruta del script mejorado.",
+    TextColor3 = T.text,
+    Font = Enum.Font.GothamMedium,
+    TextSize = 14,
+    Parent = infoSec
+})
+
+local combatTab = newPage("Combat")
+local combatSec = Sec(combatTab, "Aimbot & Kill")
+Tog(combatSec, "Silent Aim", S.saEn, function(v) S.saEn = v end)
+Sli(combatSec, "FOV", 10, 500, S.saFOV, function(v) S.saFOV = v end)
+Tog(combatSec, "Hitbox Expander", S.hbEn, function(v) S.hbEn = v end)
+Sli(combatSec, "Hitbox Size", 1, 50, S.hbSize, function(v) S.hbSize = v end)
+
+local visualsTab = newPage("Visuals")
+local visualsSec = Sec(visualsTab, "ESP")
+Tog(visualsSec, "ESP Highlight", S.eP, function(v) S.eP = v end)
+Tog(visualsSec, "ESP Boxes", S.espBoxes, function(v) S.espBoxes = v end)
+Tog(visualsSec, "ESP Lines", S.espLines, function(v) S.espLines = v end)
+
+local skinsTab = newPage("Skins")
+local skinsSec = Sec(skinsTab, "Visuales Pro")
+Btn(skinsSec, "Activar Korblox (Derecha)", function() ApplyKorblox() end)
+Btn(skinsSec, "Activar Headless", function() ApplyHeadless() end)
+
+-- Sidebar Buttons
+local function addSidebarBtn(name, pageName)
+    local btn = New("TextButton", {
+        Size = UDim2.new(1, 0, 0, 40),
+        BackgroundColor3 = T.panel,
+        Text = name,
+        TextColor3 = T.text,
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        Parent = sidebar
+    })
+    Cor(btn, 8)
     btn.MouseButton1Click:Connect(function()
         for _, p in pairs(pages) do p.Visible = false end
-        pages[name].Visible = true
-        for _, b in ipairs(sidebar:GetChildren()) do if b:IsA("TextButton") then TW(b, 0.2, {BackgroundColor3 = T.panel}); local s = b:FindFirstChildOfClass("UIStroke"); if s then TW(s, 0.2, {Color = Color3.fromRGB(0,0,0)}) end; local i = b:FindFirstChildOfClass("ImageLabel"); if i then TW(i, 0.2, {ImageColor3 = T.muted}) end; local l = b:FindFirstChildOfClass("TextLabel"); if l then TW(l, 0.2, {TextColor3 = T.muted}) end end end
-        TW(btn, 0.2, {BackgroundColor3 = T.panel2}); TW(btnStroke, 0.2, {Color = T.acc}); TW(icon, 0.2, {ImageColor3 = T.acc}); TW(lbl, 0.2, {TextColor3 = T.acc})
+        pages[pageName].Visible = true
     end)
-end
-addTab("Info", "rbxassetid://107373779810379"); addTab("Combat", "rbxassetid://118115903634266"); addTab("Hitbox Expander", "rbxassetid://77556334267498"); addTab("Visual", "rbxassetid://89399443859302"); addTab("Animaciones", "rbxassetid://106749486390001"); addTab("Camera", "rbxassetid://84844770718081"); addTab("Settings", "rbxassetid://135494523653513")
-
--- BOTÓN FLOTANTE
-local floatIcon = New("TextButton", { Size = UDim2.new(0, 65, 0, 65), Position = UDim2.new(0, 20, 0.5, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30), BackgroundTransparency = 0.2, Text = "", Parent = GUI, Visible = false })
-Cor(floatIcon, 12)
-New("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 2.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = floatIcon })
-local myLogo = New("ImageLabel", { Size = UDim2.new(0.8, 0, 0.8, 0), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), BackgroundTransparency = 1, Image = "rbxassetid://83175093174782", Parent = floatIcon })
-New("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 2, Parent = myLogo })
-
-local winOpen = false
-local function toggle()
-    winOpen = not winOpen
-    if winOpen then winMain.Visible = true; winMain.Position = UDim2.fromScale(0.5, 1.5); TW(winMain, 0.4, {Position = UDim2.fromScale(0.5, 0.5)})
-    else local a = TW(winMain, 0.4, {Position = UDim2.fromScale(0.5, 1.5)}); a.Completed:Connect(function() if not winOpen then winMain.Visible = false end end) end
-end
-floatIcon.MouseButton1Click:Connect(toggle); closeX.MouseButton1Click:Connect(toggle)
-
-local function makeDraggable(obj, target)
-    local dragStart, startPos, dragging
-    obj.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging = true; dragStart = i.Position; startPos = target.Position end end)
-    UserInputService.InputChanged:Connect(function(i) if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then local del = i.Position - dragStart; target.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + del.X, startPos.Y.Scale, startPos.Y.Offset + del.Y) end end)
-    UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging = false end end)
-end
-makeDraggable(titleBar, winMain); makeDraggable(floatIcon, floatIcon)
-
--- FUNCIONES DE COMBATE Y ESP
-local function isEnemy(p)
-    if p == LP then return false end
-    return true -- Simplificado para esta versión
+    return btn
 end
 
+addSidebarBtn("INFO", "Info")
+addSidebarBtn("COMBAT", "Combat")
+addSidebarBtn("VISUALS", "Visuals")
+addSidebarBtn("SKINS", "Skins")
 local function applyESP(p)
     if p == LP then return end
     local char = p.Character or p.CharacterAdded:Wait()
@@ -652,7 +613,6 @@ task.spawn(function()
     end
 end)
 
--- LOGICA DE LA INTRO
 task.spawn(function()
     local loadTime = 4 -- Duración de la intro
     local startTick = tick()
