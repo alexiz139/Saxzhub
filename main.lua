@@ -1,17 +1,25 @@
--- Script Saxzhub - Tema Itachi Uchiha
+-- Script Saxzhub - Tema Itachi Uchiha (VERSIÓN CORREGIDA)
 -- Creado por Manus AI
 
+--[[ Librerías de Roblox ]]
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+
 --[[ Configuración de Assets (Roblox Asset IDs) ]]
-local ITACHI_BACKGROUND_IMAGE_ID = "rbxassetid://106977920570768" -- Usar un ID de fondo de Itachi (ej. de la imagen 4 o 6)
-local SHARINGAN_IMAGE_ID = "rbxassetid://7u4iBGD0znGA" -- Mangekyou Sharingan (Index 7)
-local CROW_SOUND_ID = "rbxassetid://190872950" -- Crows Cawing
-local SHARINGAN_ACTIVATION_SOUND_ID = "rbxassetid://1592708450" -- Itachi Mangekyou Sharingan Sound Effect
-local BUTTON_CLICK_SOUND_ID = "rbxassetid://147722270" -- Air Woosh Long
+local ITACHI_BACKGROUND_IMAGE_ID = "rbxassetid://106977920570768" 
+local SHARINGAN_IMAGE_ID = "rbxassetid://7u4iBGD0znGA" 
+local CROW_SOUND_ID = "rbxassetid://190872950" 
+local SHARINGAN_ACTIVATION_SOUND_ID = "rbxassetid://1592708450" 
+local BUTTON_CLICK_SOUND_ID = "rbxassetid://147722270" 
 
 --[[ Configuración General ]]
-local INTRO_DURATION = 4 -- Duración de la intro en segundos
+local INTRO_DURATION = 4 
 local INTRO_TEXT = "Saxzhub"
-local INTRO_TEXT_COLOR = Color3.fromRGB(255, 0, 0) -- Rojo
+local INTRO_TEXT_COLOR = Color3.fromRGB(255, 0, 0)
 local FPS_BUTTON_TEXT = "FPS"
 
 --[[ Funciones de Utilidad ]]
@@ -25,17 +33,19 @@ local function createUI(instanceType, parent, properties)
 end
 
 local function playSound(soundId, volume)
-    local sound = Instance.new("Sound")
-    sound.SoundId = soundId
-    sound.Volume = volume or 1
-    sound.Parent = game.Workspace -- O un lugar más apropiado si se prefiere
-    sound:Play()
-    sound.Ended:Connect(function() sound:Destroy() end)
+    pcall(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = soundId
+        sound.Volume = volume or 1
+        sound.Parent = Workspace
+        sound:Play()
+        sound.Ended:Connect(function() sound:Destroy() end)
+    end)
 end
 
 --[[ Intro "Sharingan Activation" ]]
 local function showItachiIntro()
-    local player = game.Players.LocalPlayer
+    local player = Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
     local screenGui = createUI("ScreenGui", playerGui, {Name = "ItachiIntro", DisplayOrder = 999})
@@ -45,258 +55,210 @@ local function showItachiIntro()
         BorderSizePixel = 0
     })
 
-    -- Sharingan Image
     local sharinganImage = createUI("ImageLabel", background, {
         Size = UDim2.new(0.3, 0, 0.3, 0),
         Position = UDim2.new(0.5, 0, 0.4, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundTransparency = 1,
         Image = SHARINGAN_IMAGE_ID,
-        ImageColor3 = Color3.fromRGB(255, 0, 0), -- Rojo Sharingan
-        ScaleType = Enum.ScaleType.Fit
+        ImageColor3 = Color3.fromRGB(255, 0, 0),
+        ScaleType = Enum.ScaleType.Fit,
+        ImageTransparency = 1,
+        Rotation = 0
     })
-    sharinganImage.ImageTransparency = 1
-    sharinganImage.Rotation = 0
 
-    -- Saxzhub Text
     local introText = createUI("TextLabel", background, {
         Size = UDim2.new(0.8, 0, 0.2, 0),
         Position = UDim2.new(0.5, 0, 0.65, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 1,
         Text = INTRO_TEXT,
         TextColor3 = INTRO_TEXT_COLOR,
         TextScaled = true,
-        Font = Enum.Font.SourceSansBold, -- Considerar una fuente más "anime" si hay disponible
-        BorderSizePixel = 0
+        Font = Enum.Font.GothamBold,
+        TextTransparency = 1,
+        TextStrokeTransparency = 1,
+        TextStrokeColor3 = Color3.fromRGB(255, 0, 0)
     })
-    introText.TextTransparency = 1
-    introText.TextStrokeTransparency = 1
-    introText.TextStrokeColor3 = Color3.fromRGB(255, 0, 0)
 
-    -- Loading Bar
     local loadingBarBackground = createUI("Frame", background, {
-        Size = UDim2.new(0.6, 0, 0.02, 0),
+        Size = UDim2.new(0.6, 0, 0.015, 0),
         Position = UDim2.new(0.5, 0, 0.8, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-        BorderSizePixel = 0
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        BorderSizePixel = 0,
+        BackgroundTransparency = 1
     })
     local loadingBarFill = createUI("Frame", loadingBarBackground, {
         Size = UDim2.new(0, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = Color3.fromRGB(255, 0, 0), -- Rojo para la barra de carga
-        BorderSizePixel = 0
+        BackgroundColor3 = Color3.fromRGB(255, 0, 0),
+        BorderSizePixel = 0,
+        BackgroundTransparency = 1
     })
-    loadingBarBackground.BackgroundTransparency = 1
-    loadingBarFill.BackgroundTransparency = 1
 
-    -- Animación de la Intro
-    -- Paso 1: Sharingan aparece y sonido de activación
+    -- Animación de Seguridad (Si algo falla, la intro se quita en 6 segundos)
+    task.delay(6, function()
+        if screenGui and screenGui.Parent then screenGui:Destroy() end
+    end)
+
+    -- Ejecución de Animaciones
     playSound(SHARINGAN_ACTIVATION_SOUND_ID, 0.8)
-    TweenService:Create(sharinganImage, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
-    task.wait(0.5)
+    TweenService:Create(sharinganImage, TweenInfo.new(0.8), {ImageTransparency = 0}):Play()
+    task.wait(0.8)
 
-    -- Paso 2: Sharingan pulsa y texto Saxzhub aparece
-    TweenService:Create(sharinganImage, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0.35, 0, 0.35, 0), Rotation = 360}):Play()
-    TweenService:Create(introText, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0, TextStrokeTransparency = 0}):Play()
-    playSound(CROW_SOUND_ID, 0.7)
+    TweenService:Create(sharinganImage, TweenInfo.new(1.5, Enum.EasingStyle.Quart), {Size = UDim2.new(0.35, 0, 0.35, 0), Rotation = 360}):Play()
+    TweenService:Create(introText, TweenInfo.new(1), {TextTransparency = 0, TextStrokeTransparency = 0}):Play()
+    playSound(CROW_SOUND_ID, 0.6)
     task.wait(1)
 
-    -- Paso 3: Barra de carga y fade out
     loadingBarBackground.BackgroundTransparency = 0
     loadingBarFill.BackgroundTransparency = 0
-    for i = 0, 100 do
-        local progress = i / 100
-        loadingBarFill:TweenSize(UDim2.new(progress, 0, 1, 0), "Out", "Quad", 0.1, true)
-        task.wait(INTRO_DURATION / 100)
-    end
+    local tweenLoad = TweenService:Create(loadingBarFill, TweenInfo.new(INTRO_DURATION, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 1, 0)})
+    tweenLoad:Play()
+    tweenLoad.Completed:Wait()
 
-    TweenService:Create(screenGui, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
-    task.wait(0.5)
+    task.wait(0.2)
+    local fadeOut = TweenService:Create(background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+    TweenService:Create(sharinganImage, TweenInfo.new(0.5), {ImageTransparency = 1}):Play()
+    TweenService:Create(introText, TweenInfo.new(0.5), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
+    fadeOut:Play()
+    fadeOut.Completed:Wait()
+    
     screenGui:Destroy()
 end
 
 --[[ Interfaz Principal "Uchiha Elite" ]]
 local function setupItachiUI()
-    local player = game.Players.LocalPlayer
+    local player = Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
     local mainScreenGui = createUI("ScreenGui", playerGui, {Name = "SaxzhubUI", DisplayOrder = 998})
     local mainFrame = createUI("Frame", mainScreenGui, {
-        Size = UDim2.new(0.6, 0, 0.8, 0),
+        Size = UDim2.new(0, 550, 0, 350),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.1,
+        BackgroundColor3 = Color3.fromRGB(10, 10, 10),
+        BackgroundTransparency = 0.15,
         BorderSizePixel = 0
     })
-    -- Fondo de Itachi
+    createUI("UICorner", mainFrame, {CornerRadius = UDim.new(0, 10)})
+
     local backgroundImage = createUI("ImageLabel", mainFrame, {
         Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 0.4,
         Image = ITACHI_BACKGROUND_IMAGE_ID,
         ScaleType = Enum.ScaleType.Crop,
-        ZIndex = -1 -- Para que esté detrás de todo
+        ZIndex = 0
     })
+    createUI("UICorner", backgroundImage, {CornerRadius = UDim.new(0, 10)})
 
-    -- Borde de neón rojo (Amaterasu)
-    local borderFrame = createUI("Frame", mainFrame, {
-        Size = UDim2.new(1, 4, 1, 4),
-        Position = UDim2.new(0.5, -2, 0.5, -2),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.fromRGB(255, 0, 0),
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0,
-        ZIndex = -2 -- Detrás del fondo
-    })
-
-    -- Aquí irán los botones y paneles de opciones
-    -- Barra lateral para pestañas
     local sidebar = createUI("Frame", mainFrame, {
-        Size = UDim2.new(0.25, 0, 1, 0),
-        BackgroundColor3 = Color3.fromRGB(10, 10, 10),
-        BackgroundTransparency = 0.3,
-        BorderSizePixel = 0
+        Size = UDim2.new(0.28, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(5, 5, 5),
+        BackgroundTransparency = 0.4,
+        BorderSizePixel = 0,
+        ZIndex = 2
     })
+    createUI("UICorner", sidebar, {CornerRadius = UDim.new(0, 10)})
 
     local function createTab(name, pos, callback)
         local tab = createUI("TextButton", sidebar, {
-            Size = UDim2.new(0.9, 0, 0.1, 0),
-            Position = UDim2.new(0.05, 0, pos, 0),
+            Size = UDim2.new(0.85, 0, 0.08, 0),
+            Position = UDim2.new(0.5, 0, 0.1 + (pos * 0.1), 0),
+            AnchorPoint = Vector2.new(0.5, 0),
             BackgroundColor3 = Color3.fromRGB(20, 20, 20),
-            BackgroundTransparency = 0.2,
+            BackgroundTransparency = 0.3,
             Text = name,
             TextColor3 = Color3.fromRGB(200, 200, 200),
-            TextScaled = true,
-            Font = Enum.Font.SourceSansBold,
-            BorderSizePixel = 0
+            TextSize = 14,
+            Font = Enum.Font.GothamBold,
+            BorderSizePixel = 0,
+            ZIndex = 3
         })
-        createUI("UICorner", tab, {CornerRadius = UDim.new(0, 6)})
+        createUI("UICorner", tab, {CornerRadius = UDim.new(0, 4)})
 
         tab.MouseEnter:Connect(function()
-            playSound(BUTTON_CLICK_SOUND_ID, 0.3)
-            TweenService:Create(tab, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+            playSound(BUTTON_CLICK_SOUND_ID, 0.2)
+            TweenService:Create(tab, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 0, 0), BackgroundColor3 = Color3.fromRGB(40, 0, 0)}):Play()
         end)
         tab.MouseLeave:Connect(function()
             TweenService:Create(tab, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(200, 200, 200), BackgroundColor3 = Color3.fromRGB(20, 20, 20)}):Play()
         end)
         tab.MouseButton1Click:Connect(function()
-            playSound(BUTTON_CLICK_SOUND_ID, 0.6)
+            playSound(BUTTON_CLICK_SOUND_ID, 0.5)
             callback()
         end)
-        return tab
     end
 
-    -- Contenedor de opciones
-    local container = createUI("ScrollingFrame", mainFrame, {
-        Size = UDim2.new(0.7, 0, 0.9, 0),
-        Position = UDim2.new(0.28, 0, 0.05, 0),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ScrollBarThickness = 4,
-        ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
-    })
-    createUI("UIListLayout", container, {Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder})
+    createTab("Amaterasu Aim", 0, function() print("Combat") end)
+    createTab("Sharingan Vision", 1, function() print("Visuals") end)
+    createTab("Body Flicker", 2, function() print("Movement") end)
+    createTab("Izanagi Misc", 3, function() print("Misc") end)
 
-    -- Pestañas de ejemplo
-    createTab("Amaterasu Aim", 0.1, function() print("Tab Combat") end)
-    createTab("Sharingan Vision", 0.22, function() print("Tab Visuals") end)
-    createTab("Body Flicker", 0.34, function() print("Tab Movement") end)
-    createTab("Izanagi Misc", 0.46, function() print("Tab Misc") end)
-
-    -- Botón de cerrar con efecto
     local closeButton = createUI("TextButton", mainFrame, {
-        Size = UDim2.new(0.05, 0, 0.05, 0),
-        Position = UDim2.new(0.98, 0, 0.02, 0),
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -10, 0, 10),
         AnchorPoint = Vector2.new(1, 0),
-        BackgroundColor3 = Color3.fromRGB(200, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(150, 0, 0),
         Text = "X",
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        Font = Enum.Font.SourceSansBold,
-        TextScaled = true,
-        BorderSizePixel = 0
+        Font = Enum.Font.GothamBold,
+        TextSize = 18,
+        ZIndex = 5
     })
     createUI("UICorner", closeButton, {CornerRadius = UDim.new(1, 0)})
     closeButton.MouseButton1Click:Connect(function()
-        playSound(BUTTON_CLICK_SOUND_ID, 0.8)
+        playSound(BUTTON_CLICK_SOUND_ID, 0.6)
         mainScreenGui:Destroy()
     end)
-
-    print("Interfaz Uchiha Elite cargada.")
 end
 
---[[ Sistema Anti-Lag Pro (Grey Sky / Modo Cartón) - Mantener la funcionalidad base ]]
-local function optimize(obj)
-    pcall(function()
-        if obj:IsA("BasePart") then
-            obj.Material = Enum.Material.Plastic
-            obj.Reflectance = 0
-            obj.CastShadow = false
-            for _, child in pairs(obj:GetChildren()) do
-                if child:IsA("Texture") or child:IsA("Decal") then child:Destroy() end
-            end
-        elseif obj:IsA("Decal") or obj:IsA("Texture") then
-            obj:Destroy()
-        elseif obj:IsA("ParticleEmitter") or obj:IsA("Fire") or obj:IsA("Smoke") or obj:IsA("Trail") then
-            obj.Enabled = false
-        end
-    end)
-end
-
+--[[ Sistema Anti-Lag Pro ]]
 local function applyAntiLagPro()
-    game.Lighting.GlobalShadows = false
-    game.Lighting.Brightness = 0.5
-    game.Lighting.Ambient = Color3.fromRGB(100, 100, 100)
-    game.Lighting.OutdoorAmbient = Color3.fromRGB(100, 100, 100)
-    if game.Lighting:FindFirstChildOfClass("Sky") then game.Lighting:FindFirstChildOfClass("Sky"):Destroy() end
-    game.Workspace.Terrain.Decoration = false
-    game.Workspace.Terrain.WaterTransparency = 1
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 0.5
+    if Lighting:FindFirstChildOfClass("Sky") then Lighting:FindFirstChildOfClass("Sky"):Destroy() end
+    Workspace.Terrain.Decoration = false
 
     task.spawn(function()
-        local descendants = game:GetDescendants()
-        for i, v in pairs(descendants) do
-            optimize(v)
-            if i % 100 == 0 then task.wait() end
+        for i, v in pairs(game:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.Material = Enum.Material.Plastic
+                v.Reflectance = 0
+                v.CastShadow = false
+            elseif v:IsA("Decal") or v:IsA("Texture") then
+                v.Transparency = 1
+            elseif v:IsA("ParticleEmitter") or v:IsA("Fire") or v:IsA("Smoke") then
+                v.Enabled = false
+            end
+            if i % 200 == 0 then task.wait() end
         end
     end)
-
-    game.DescendantAdded:Connect(optimize)
 end
 
---[[ Contador de FPS con RGB (Botón Pequeño y Ligero) ]]
+--[[ Contador de FPS ]]
 local function setupFPSCounter()
-    local player = game.Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-
-    local screenGui = createUI("ScreenGui", playerGui, {Name = "FPSCounter", DisplayOrder = 998})
-    local fpsButton = createUI("TextLabel", screenGui, {
-        Size = UDim2.new(0.08, 0, 0.03, 0),
-        Position = UDim2.new(0.9, 0, 0.02, 0),
+    local screenGui = createUI("ScreenGui", Players.LocalPlayer.PlayerGui, {Name = "FPSCounter"})
+    local fpsLabel = createUI("TextLabel", screenGui, {
+        Size = UDim2.new(0, 100, 0, 30),
+        Position = UDim2.new(1, -110, 0, 10),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 0.7,
-        Text = FPS_BUTTON_TEXT .. ": Loading...",
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextScaled = true,
-        Font = Enum.Font.SourceSansBold,
-        BorderSizePixel = 0
+        TextSize = 14,
+        Font = Enum.Font.GothamBold
     })
+    createUI("UICorner", fpsLabel, {CornerRadius = UDim.new(0, 6)})
 
-    local hue = 0
-    game:GetService("RunService").RenderStepped:Connect(function()
-        local currentFps = math.floor(1 / game:GetService("RunService").Heartbeat:Wait() + 0.5)
-        fpsButton.Text = FPS_BUTTON_TEXT .. ": " .. currentFps
-
-        hue = (hue + 0.01) % 1
-        fpsButton.TextColor3 = Color3.fromHSV(hue, 1, 1)
+    RunService.RenderStepped:Connect(function()
+        local fps = math.floor(1 / RunService.Heartbeat:Wait() + 0.5)
+        fpsLabel.Text = FPS_BUTTON_TEXT .. ": " .. fps
+        fpsLabel.TextColor3 = Color3.fromHSV((tick() * 0.1) % 1, 1, 1)
     end)
 end
 
---[[ Ejecución del Script ]]
-showItachiIntro()
+--[[ Ejecución ]]
+task.spawn(showItachiIntro)
 applyAntiLagPro()
 setupFPSCounter()
 setupItachiUI()
-
-print("Script Saxzhub - Tema Itachi Uchiha cargado exitosamente.")
