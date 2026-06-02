@@ -1,41 +1,96 @@
 --[[ 
-    Saxzhub Duels Script + Skins (Failsafe Debug)
+    Saxzhub Duels Script + Advanced Functions
     Owner: alexiz139
 ]]
 
-print('Saxzhub: Iniciando Script...')
+--[[
+========================================
 
-local Players          = game:GetService('Players')
-local TweenService     = game:GetService('TweenService')
-local RunService       = game:GetService('RunService')
-local UserInputService = game:GetService('UserInputService')
-local Workspace        = game:GetService('Workspace')
-local LP               = Players.LocalPlayer
-local Cam              = Workspace.CurrentCamera
+╔════════════════════════╗
+║          Saxzhub        ║ Owner          ║
+╚════════════════════════╝
+
+Script Edited for Saxzhub
+Version: 1.0 + Intro
+
+Owner: Saxzhub
+Creadores:
+- Creador: ForceDev
+- Dev: Saxzhub
+
+========================================
+
+]]
+
+local Players          = game:GetService("Players")
+local TweenService     = game:GetService("TweenService")
+local RunService       = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace        = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LP   = Players.LocalPlayer
+local Cam  = Workspace.CurrentCamera
+local Mouse = LP:GetMouse()
+local C3   = Color3.fromRGB
 
 local T = {
-    bg      = Color3.fromRGB(5, 5, 5),     
-    panel   = Color3.fromRGB(15, 15, 15), 
-    panel2  = Color3.fromRGB(22, 22, 22),  
-    acc     = Color3.fromRGB(255, 255, 255), 
-    text    = Color3.fromRGB(250, 250, 250),
-    red     = Color3.fromRGB(200, 30, 30),
-    darkRed = Color3.fromRGB(30, 30, 30),
-    tabSize = 160
+bg      = Color3.fromRGB(5, 5, 5),     
+panel   = Color3.fromRGB(15, 15, 15), 
+panel2  = Color3.fromRGB(22, 22, 22),  
+border  = Color3.fromRGB(45, 45, 45),  
+acc     = Color3.fromRGB(255, 255, 255), 
+text    = Color3.fromRGB(250, 250, 250),
+muted   = Color3.fromRGB(100, 100, 100),
+darkRed = Color3.fromRGB(30, 30, 30), 
+red     = Color3.fromRGB(200, 30, 30),
+green   = Color3.fromRGB(34, 197, 94),
+bgTrans = 0.1,
+tabSize = 160,
+iconSize = 24,
 }
 
-local S = { saEn = false, saFOV = 150, saPart = 'Head', hbEn = false, hbSize = 10, eP = false, espBoxes = false, espLines = false, espColor = Color3.fromRGB(220, 20, 20) }
+local S = {
+    saEn     = false,
+    saFOV    = 150,
+    saPart   = "Head",
+    saDist   = 300,
+    hbEn     = false,
+    hbSize   = 10,
+    autoKill = false,
+    eP       = false,
+    fovEn    = false,
+    fovVal   = 70,
+    ncEn     = false,
+    spdEn    = false,
+    spdVal   = 200,
+    espLines = false,
+    espBoxes = false,
+    autoShoot = false,
+    shootDist = 250,
+    wallCheck = false,
+    hideFovCircle = false,
+    espR = 220,
+    espG = 20,
+    espB = 20,
+    espColor = Color3.fromRGB(220, 20, 20),
+    saOnlyGun = false,
+    saPrediction = 100
+}
 
 local function New(cls, props)
     local o = Instance.new(cls)
-    for k, v in pairs(props or {}) do o[k] = v end
+    for k, v in pairs(props or {}) do
+        o[k] = v
+    end
     return o
 end
 
 local function Cor(obj, r)
-    local c = Instance.new('UICorner')
-    c.CornerRadius = UDim.new(0, r or 8)
-    c.Parent = obj
+    New("UICorner", {
+        CornerRadius = UDim.new(0, r or 8),
+        Parent = obj
+    })
 end
 
 local function TW(obj, t, props)
@@ -44,11 +99,247 @@ local function TW(obj, t, props)
     return anim
 end
 
--- GUI BASE
-local GUI = New('ScreenGui', { Name = 'Saxzhub_GUI', ResetOnSpawn = false, Parent = (gethui and gethui() or game:GetService('CoreGui')) })
-print('Saxzhub: GUI Base Creada')
+-- GUI PRINCIPAL
+local GUI = New("ScreenGui", {
+    Name = "Saxzhub_GUI",
+    ResetOnSpawn = false,
+    DisplayOrder = 10,
+    IgnoreGuiInset = true,
+    Parent = (gethui and gethui() or game:GetService("CoreGui"))
+})
 
--- SKINS LOGIC
+-- PANTALLA DE CARGA (INTRO)
+local IntroFrame = New("Frame", {
+    Name = "Intro",
+    Size = UDim2.fromScale(1, 1),
+    BackgroundColor3 = Color3.new(0, 0, 0),
+    ZIndex = 100,
+    Parent = GUI
+})
+
+local IntroBackground = New("ImageLabel", {
+    Size = UDim2.fromScale(1, 1),
+    Image = "rbxassetid://94303726339504",
+    ScaleType = Enum.ScaleType.Crop,
+    BackgroundTransparency = 1,
+    ZIndex = 101,
+    Parent = IntroFrame
+})
+
+local IntroLogo = New("ImageLabel", {
+    Size = UDim2.new(0, 150, 0, 150),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.4),
+    Image = "rbxassetid://106977920570768",
+    BackgroundTransparency = 1,
+    ZIndex = 102,
+    Parent = IntroFrame
+})
+Cor(IntroLogo, 75)
+
+local IntroName = New("TextLabel", {
+    Size = UDim2.new(0, 200, 0, 50),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.55),
+    Text = "Saxzhub",
+    TextColor3 = Color3.new(1, 1, 1),
+    Font = Enum.Font.GothamBold,
+    TextSize = 35,
+    BackgroundTransparency = 1,
+    ZIndex = 102,
+    Parent = IntroFrame
+})
+
+local LoadingBarContainer = New("Frame", {
+    Size = UDim2.new(0, 300, 0, 15),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.65),
+    BackgroundColor3 = Color3.new(0, 0, 0),
+    ZIndex = 102,
+    Parent = IntroFrame
+})
+Cor(LoadingBarContainer, 5)
+local LoadingStroke = New("UIStroke", {
+    Color = Color3.new(1, 1, 1),
+    Thickness = 2,
+    Parent = LoadingBarContainer
+})
+
+local LoadingBarFill = New("Frame", {
+    Size = UDim2.fromScale(0, 1),
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    ZIndex = 103,
+    Parent = LoadingBarContainer
+})
+Cor(LoadingBarFill, 5)
+
+-- FUNCIONES DE LA INTERFAZ PRINCIPAL (DENTRO DE WINMAIN)
+local winMain = New("Frame", {
+    Name = "Window",
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.5),
+    Size = UDim2.new(0, 600, 0, 320),
+    BackgroundColor3 = T.bg,
+    BackgroundTransparency = T.bgTrans,
+    Visible = false, -- SE OCULTA AL INICIO
+    Parent = GUI
+})
+Cor(winMain, 10)
+New("UIStroke", {
+    Color = Color3.new(0, 0, 0),
+    Thickness = 3,
+    Parent = winMain
+})
+
+local titleBar = New("Frame", {
+    Position = UDim2.new(0, 8, 0, 8),
+    Size = UDim2.new(1, -16, 0, 42),
+    BackgroundColor3 = Color3.fromRGB(25, 25, 25),
+    BackgroundTransparency = 0.15,
+    Parent = winMain
+})
+Cor(titleBar, 12)
+New("UIStroke", { Color = T.darkRed, Thickness = 2.2, Parent = titleBar })
+
+New("TextLabel", {
+    Position = UDim2.new(0, 15, 0, 0),
+    Size = UDim2.new(0, 300, 1, 0),
+    BackgroundTransparency = 1,
+    Text = "Saxzhub | Versión 1 | Duels: Asesinos vs Sheriffs",
+    TextColor3 = T.text,
+    Font = Enum.Font.GothamBold,
+    TextSize = 16,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Parent = titleBar
+})
+
+local closeX = New("TextButton", {
+    AnchorPoint = Vector2.new(1, 0.5),
+    Position = UDim2.new(1, -10, 0.5, 0),
+    Size = UDim2.new(0, 32, 0, 32),
+    BackgroundColor3 = T.red,
+    Text = "-",
+    TextColor3 = Color3.new(1, 1, 1),
+    Font = Enum.Font.GothamBold,
+    Parent = titleBar
+})
+Cor(closeX, 8)
+New("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Parent = closeX })
+
+local sidebar = New("ScrollingFrame", {
+    Position = UDim2.new(0, 10, 0, 58),
+    Size = UDim2.new(0, T.tabSize, 1, -66),
+    BackgroundTransparency = 1,
+    ScrollBarThickness = 0,
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    Parent = winMain
+})
+New("UIListLayout", { FillDirection = Enum.FillDirection.Vertical, Padding = UDim.new(0, 18), SortOrder = Enum.SortOrder.LayoutOrder, Parent = sidebar })
+New("UIPadding", { PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10), PaddingLeft = UDim.new(0, 5), PaddingRight = UDim.new(0, 5), Parent = sidebar })
+
+local contentArea = New("Frame", {
+    Position = UDim2.new(0, T.tabSize + 25, 0, 58),
+    Size = UDim2.new(1, -(T.tabSize + 25), 1, -66),
+    BackgroundTransparency = 1,
+    Parent = winMain
+})
+
+local clickSound = Instance.new("Sound")
+clickSound.SoundId = "rbxassetid://4590657391"
+clickSound.Volume = 1
+clickSound.Parent = GUI
+
+local function playClick() clickSound:Play() end
+
+GUI.DescendantAdded:Connect(function(obj)
+    if obj:IsA("TextButton") or obj:IsA("ImageButton") then
+        obj.MouseButton1Click:Connect(playClick)
+    end
+end)
+
+
+local GlobalGameInfo = { AlivePlayersFolder = nil, PlayerTeamName = nil, CurrentGameFolder = nil, LastCheckTime = 0, MyTeam = nil, EnemyTeam = nil }
+
+local function SanitizeName(str)
+    return tostring(str):gsub('%s+', '')
+end
+
+local function UpdateGlobalGameInfo()
+    local runningGames = workspace:FindFirstChild("RunningGames")
+    if not runningGames then return end
+    local foundGame = nil
+    local foundAliveParams = nil
+    local foundTeam = nil
+    for _, gameFolder in ipairs(runningGames:GetChildren()) do
+        local aliveParams = gameFolder:FindFirstChild("AlivePlayers")
+        if aliveParams and aliveParams:IsA("Folder") then
+            if aliveParams:FindFirstChild("TeamBlue") and aliveParams.TeamBlue:FindFirstChild(SanitizeName(LP.Name)) then
+                foundGame = gameFolder
+                foundAliveParams = aliveParams
+                foundTeam = "TeamBlue"
+                break
+            elseif aliveParams:FindFirstChild("TeamRed") and aliveParams.TeamRed:FindFirstChild(SanitizeName(LP.Name)) then
+                foundGame = gameFolder
+                foundAliveParams = aliveParams
+                foundTeam = "TeamRed"
+                break
+            end
+        end
+    end
+    if foundGame and foundAliveParams then
+        GlobalGameInfo.AlivePlayersFolder = foundAliveParams
+        GlobalGameInfo.PlayerTeamName = foundTeam
+        GlobalGameInfo.CurrentGameFolder = foundGame
+        GlobalGameInfo.MyTeam = foundTeam
+        GlobalGameInfo.EnemyTeam = (foundTeam == "TeamBlue") and "TeamRed" or "TeamBlue"
+    else
+        GlobalGameInfo.AlivePlayersFolder = nil
+        GlobalGameInfo.PlayerTeamName = nil
+        GlobalGameInfo.CurrentGameFolder = nil
+        GlobalGameInfo.MyTeam = nil
+        GlobalGameInfo.EnemyTeam = nil
+    end
+end
+
+local function isEnemy(p)
+    if p == LP then return false end
+local pages = {}
+
+-- CREACIÓN DE PÁGINAS AVANZADAS
+local pgCombat = newPage("Combat")
+local pgHitbox = newPage("Hitbox")
+local pgVisual = newPage("Visual")
+local pgCamera = newPage("Camera")
+local pgSkins = newPage("Skins")
+local pgInfo = newPage("Info")
+
+-- SECCIÓN COMBAT
+local sCombat = Sec(pgCombat, "Silent Aim 360°")
+Tog(sCombat, "Activar Silent Aim", false, function(v) S.saEn = v end)
+Tog(sCombat, "Solo con Arma", false, function(v) S.saOnlyGun = v end)
+Tog(sCombat, "Wall Check", false, function(v) S.wallCheck = v end)
+Tog(sCombat, "Ocultar FOV", false, function(v) S.hideFovCircle = v end)
+Sli(sCombat, "Radio de FOV", 30, 800, 150, function(v) S.saFOV = v end)
+Sli(sCombat, "Fuerza Máxima", 50, 1000, 300, function(v) S.saDist = v end)
+LineSlider(sCombat, "Predicción", 0, 100, 100, function(v) S.saPrediction = v end)
+
+local sAuto = Sec(pgCombat, "Auto Combat")
+Tog(sAuto, "Auto Shoot", false, function(v) S.autoShoot = v end)
+Sli(sAuto, "Distancia de Disparo", 10, 1000, 250, function(v) S.shootDist = v end)
+
+-- SECCIÓN HITBOX
+local sHB = Sec(pgHitbox, "Hitbox Expander Pro")
+Tog(sHB, "Activar Hitbox", false, function(v) S.hbEn = v end)
+Sli(sHB, "Tamaño de Hitbox", 2, 60, 10, function(v) S.hbSize = v end)
+
+-- SECCIÓN VISUAL
+local sVisual = Sec(pgVisual, "Visuales")
+Tog(sVisual, "Highlight Brillo", false, function(v) S.eP = v end)
+Tog(sVisual, "ESP Líneas", false, function(v) S.espLines = v end)
+Tog(sVisual, "ESP Cajas", false, function(v) S.espBoxes = v end)
+
+-- SECCIÓN SKINS (KORBLOX & HEADLESS)
 local function ApplyKorblox()
     pcall(function()
         local char = LP.Character
@@ -68,110 +359,78 @@ local function ApplyHeadless()
     end)
 end
 
--- WINDOW
-local winMain = New('Frame', { Name = 'Window', AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.new(0, 600, 0, 320), BackgroundColor3 = T.bg, Visible = false, Parent = GUI })
-Cor(winMain, 10)
+local sSkins = Sec(pgSkins, "Visuales Pro")
+Btn(sSkins, "Activar Korblox (Derecha)", ApplyKorblox)
+Btn(sSkins, "Activar Headless", ApplyHeadless)
 
-local titleBar = New('Frame', { Position = UDim2.new(0, 8, 0, 8), Size = UDim2.new(1, -16, 0, 42), BackgroundColor3 = Color3.fromRGB(25, 25, 25), Parent = winMain })
-Cor(titleBar, 12)
+-- SECCIÓN INFO
+local sInfo = Sec(pgInfo, "Información")
+New("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 80),
+    BackgroundTransparency = 1,
+    Text = "Bienvenido a Saxzhub\nOwner: alexiz139\nScript mejorado con funciones Pro.",
+    TextColor3 = T.text,
+    Font = Enum.Font.GothamMedium,
+    TextSize = 14,
+    Parent = sInfo
+})
 
-local titleText = New('TextLabel', { Position = UDim2.new(0, 15, 0, 0), Size = UDim2.new(0, 300, 1, 0), BackgroundTransparency = 1, Text = 'Saxzhub | Duels', TextColor3 = T.text, Font = Enum.Font.GothamBold, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left, Parent = titleBar })
-
-local closeX = New('TextButton', { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -10, 0.5, 0), Size = UDim2.new(0, 32, 0, 32), BackgroundColor3 = T.red, Text = '-', TextColor3 = T.text, Font = Enum.Font.GothamBold, Parent = titleBar })
-Cor(closeX, 8)
-
-local sidebar = New('ScrollingFrame', { Position = UDim2.new(0, 10, 0, 58), Size = UDim2.new(0, T.tabSize, 1, -66), BackgroundTransparency = 1, ScrollBarThickness = 0, Parent = winMain })
-New('UIListLayout', { Padding = UDim.new(0, 10), Parent = sidebar })
-
-local contentArea = New('Frame', { Position = UDim2.new(0, T.tabSize + 25, 0, 58), Size = UDim2.new(1, -(T.tabSize + 25), 1, -66), BackgroundTransparency = 1, Parent = winMain })
-
-local pages = {}
-local function newPage(name)
-    local pg = New('ScrollingFrame', { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = false, ScrollBarThickness = 0, Parent = contentArea })
-    New('UIListLayout', { Padding = UDim.new(0, 10), Parent = pg })
-    pages[name] = pg
-    return pg
-end
-
-local function Sec(par, ttl)
-    local c = New('Frame', { Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = T.panel2, Parent = par })
-    Cor(c, 5)
-    New('TextLabel', { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Text = ttl, TextColor3 = T.acc, Font = Enum.Font.GothamBold, TextSize = 12, Parent = c })
-    return par
-end
-
-local function Btn(par, lbl, cb)
-    local b = New('TextButton', { Size = UDim2.new(1, 0, 0, 35), BackgroundColor3 = T.panel2, Text = lbl, TextColor3 = T.text, Font = Enum.Font.GothamBold, Parent = par })
-    Cor(b, 5)
-    b.MouseButton1Click:Connect(cb)
-end
-
-local function Tog(par, lbl, def, cb)
-    local b = New('TextButton', { Size = UDim2.new(1, 0, 0, 35), BackgroundColor3 = def and Color3.fromRGB(0, 200, 0) or T.red, Text = lbl, TextColor3 = T.text, Font = Enum.Font.GothamBold, Parent = par })
-    Cor(b, 5)
-    local active = def
-    b.MouseButton1Click:Connect(function()
-        active = not active
-        b.BackgroundColor3 = active and Color3.fromRGB(0, 200, 0) or T.red
-        cb(active)
+-- SIDEBAR BUTTONS
+local function addSidebarBtn(name, pageName)
+    local btn = New("TextButton", {
+        Size = UDim2.new(1, 0, 0, 40),
+        BackgroundColor3 = T.panel,
+        Text = name,
+        TextColor3 = T.text,
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        Parent = sidebar
+    })
+    Cor(btn, 8)
+    btn.MouseButton1Click:Connect(function()
+        for _, p in pairs(pages) do p.Visible = false end
+        pages[pageName].Visible = true
     end)
+    return btn
 end
 
--- PAGES SETUP
-local infoPage = newPage('Info')
-Sec(infoPage, 'INFO')
-New('TextLabel', { Size = UDim2.new(1,0,0,50), BackgroundTransparency = 1, Text = 'Owner: alexiz139', TextColor3 = T.text, Parent = infoPage })
+addSidebarBtn("INFO", "Info")
+addSidebarBtn("COMBAT", "Combat")
+addSidebarBtn("HITBOX", "Hitbox")
+addSidebarBtn("VISUAL", "Visual")
+addSidebarBtn("SKINS", "Skins")
 
-local combatPage = newPage('Combat')
-Sec(combatPage, 'COMBAT')
-Tog(combatPage, 'Silent Aim', false, function(v) S.saEn = v end)
-Tog(combatPage, 'Hitbox', false, function(v) S.hbEn = v end)
 
-local skinsPage = newPage('Skins')
-Sec(skinsPage, 'SKINS')
-Btn(skinsPage, 'Korblox', ApplyKorblox)
-Btn(skinsPage, 'Headless', ApplyHeadless)
 
--- SIDEBAR
-local function addTab(n, p)
-    local b = New('TextButton', { Size = UDim2.new(1, 0, 0, 35), BackgroundColor3 = T.panel2, Text = n, TextColor3 = T.text, Font = Enum.Font.GothamBold, Parent = sidebar })
-    Cor(b, 5)
-    b.MouseButton1Click:Connect(function()
-        for _, pg in pairs(pages) do pg.Visible = false end
-        pages[p].Visible = true
-    end)
-end
-addTab('INFO', 'Info')
-addTab('COMBAT', 'Combat')
-addTab('SKINS', 'Skins')
-pages['Info'].Visible = true
 
--- FLOAT ICON
-local floatIcon = New('ImageButton', { Name = 'FloatIcon', Size = UDim2.new(0, 50, 0, 50), Position = UDim2.new(0, 10, 0.5, -25), Image = 'rbxassetid://83175093174782', Visible = false, Parent = GUI })
-Cor(floatIcon, 25)
-floatIcon.MouseButton1Click:Connect(function() winMain.Visible = not winMain.Visible end)
-closeX.MouseButton1Click:Connect(function() winMain.Visible = false end)
-
--- INTRO
-local IntroFrame = New('Frame', { Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0,0,0), ZIndex = 100, Parent = GUI })
-local IntroLogo = New('ImageLabel', { Size = UDim2.new(0, 100, 0, 100), AnchorPoint = Vector2.new(0.5,0.5), Position = UDim2.fromScale(0.5, 0.4), Image = 'rbxassetid://83175093174782', BackgroundTransparency = 1, ZIndex = 101, Parent = IntroFrame })
-local IntroText = New('TextLabel', { Size = UDim2.new(0, 200, 0, 50), AnchorPoint = Vector2.new(0.5,0.5), Position = UDim2.fromScale(0.5, 0.55), Text = 'Saxzhub', TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 30, BackgroundTransparency = 1, ZIndex = 101, Parent = IntroFrame })
-
+-- LOGICA DE LA INTRO
 task.spawn(function()
-    print('Saxzhub: Iniciando Intro...')
-    task.wait(4)
-    TW(IntroFrame, 1, { BackgroundTransparency = 1 })
-    TW(IntroLogo, 1, { ImageTransparency = 1 })
-    TW(IntroText, 1, { TextTransparency = 1 })
-    task.wait(1)
-    IntroFrame:Destroy()
-    floatIcon.Visible = true
-    print('Saxzhub: Script Listo!')
-end)
-
--- AIMBOT / ESP LOGIC (Simplified for Failsafe)
-RunService.RenderStepped:Connect(function()
-    if S.saEn then
-        -- Aimbot Logic here
+    local loadTime = 4 -- Duración de la intro
+    local startTick = tick()
+    
+    while tick() - startTick < loadTime do
+        local progress = (tick() - startTick) / loadTime
+        LoadingBarFill.Size = UDim2.fromScale(progress, 1)
+        task.wait()
     end
+    
+    LoadingBarFill.Size = UDim2.fromScale(1, 1)
+    task.wait(0.5)
+    
+    -- Desvanecer Intro
+    TW(IntroFrame, 0.8, {BackgroundTransparency = 1})
+    TW(IntroBackground, 0.8, {ImageTransparency = 1})
+    TW(IntroLogo, 0.8, {ImageTransparency = 1})
+    TW(IntroName, 0.8, {TextTransparency = 1})
+    TW(LoadingBarContainer, 0.8, {BackgroundTransparency = 1})
+    TW(LoadingBarFill, 0.8, {BackgroundTransparency = 1})
+    TW(LoadingStroke, 0.8, {Transparency = 1})
+    
+    task.wait(0.8)
+    IntroFrame:Destroy()
+    
+    -- Mostrar Interfaz
+    pages["Info"].Visible = true
+    floatIcon.Visible = true
+    toggle()
 end)
