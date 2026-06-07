@@ -33,12 +33,18 @@ local S = {
 local TabMain = Window:CreateTab("Principal", 4483362458)
 local TabTeleport = Window:CreateTab("Teletransportes", 4483362458)
 local TabPlayer = Window:CreateTab("Jugador", 4483362458)
+local TabCreator = Window:CreateTab("Creador 👑", 4483362458)
 
--- SECCIÓN PRINCIPAL (AUTO WIN)
+-- SECCIÓN CREADOR (TEXTO ROJO)
+TabCreator:CreateSection("👑 INFORMACIÓN DEL CREADOR")
+TabCreator:CreateLabel("CREADOR 👑", 4483362458, Color3.fromRGB(255, 0, 0))
+TabCreator:CreateParagraph({Title = "Owner", Content = "alexiz139"})
+
+-- SECCIÓN PRINCIPAL (AUTO WIN MEJORADO)
 TabMain:CreateSection("Farming")
 
 TabMain:CreateToggle({
-   Name = "Auto Win (Farmear Victorias)",
+   Name = "Auto Win (Placas Amarillas)",
    CurrentValue = false,
    Flag = "AutoWin",
    Callback = function(Value)
@@ -46,63 +52,50 @@ TabMain:CreateToggle({
       task.spawn(function()
           while S.AutoWin do
               pcall(function()
-                  -- Intentar teletransportarse a las placas amarillas de victoria
-                  -- Estructura común: Workspace.Worlds.World2.Wins o similar
-                  local wins = workspace:FindFirstChild("Worlds") and workspace.Worlds:FindFirstChild("World2") and workspace.Worlds.World2:FindFirstChild("Wins")
-                  if wins then
-                      for _, win in pairs(wins:GetChildren()) do
-                          if win:IsA("BasePart") and S.AutoWin then
-                              LP.Character.HumanoidRootPart.CFrame = win.CFrame + Vector3.new(0, 3, 0)
-                              task.wait(0.5)
+                  -- Buscar placas amarillas con texto de Win
+                  for _, obj in pairs(workspace:GetDescendants()) do
+                      if S.AutoWin and obj:IsA("BasePart") and (obj.Name:lower():find("win") or obj.Color == Color3.fromRGB(255, 255, 0)) then
+                          -- Verificar si tiene un BillboardGui o texto arriba
+                          local hasWinText = false
+                          for _, child in pairs(obj:GetDescendants()) do
+                              if child:IsA("TextLabel") and child.Text:lower():find("win") then
+                                  hasWinText = true
+                                  break
+                              end
                           end
-                      end
-                  else
-                      -- Backup: Buscar por nombre en todo el workspace si no se encuentra la ruta exacta
-                      for _, obj in pairs(workspace:GetDescendants()) do
-                          if obj.Name == "WinPart" or obj.Name == "WinPad" or (obj:IsA("BasePart") and obj.Color == Color3.fromRGB(255, 255, 0)) then
-                             if S.AutoWin then
-                                 LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
-                                 task.wait(0.5)
-                             end
+                          
+                          if hasWinText or obj.Name:lower():find("winpad") then
+                              LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                              task.wait(0.6) -- Tiempo para que el juego registre la victoria
                           end
                       end
                   end
               end)
-              task.wait(1)
+              task.wait(0.5)
           end
       end)
    end,
 })
 
--- SECCIÓN TELETRANSPORTES
-TabTeleport:CreateSection("Secciones del Mundo 2")
+-- SECCIÓN TELETRANSPORTES (BOTONES DINÁMICOS)
+TabTeleport:CreateSection("Teletransportes a Victorias")
 
-local function TPTo(pos)
-    pcall(function()
-        LP.Character.HumanoidRootPart.CFrame = pos
-    end)
-end
-
--- Botones para TPs específicos (Basado en la estructura típica de niveles)
-for i = 1, 15 do
-    TabTeleport:CreateButton({
-       Name = "Teleport a Sección " .. i,
-       Callback = function()
-          -- Buscar la sección por nombre o número
-          local target = workspace:FindFirstChild("World2") and workspace.World2:FindFirstChild("Stage" .. i) or workspace:FindFirstChild("Stage" .. i)
-          if target then
-              TPTo(target.CFrame + Vector3.new(0, 5, 0))
-          else
-              Rayfield:Notify({
-                 Title = "Error",
-                 Content = "No se encontró la sección " .. i,
-                 Duration = 3,
-                 Image = 4483362458,
-              })
-          end
-       end,
-    })
-end
+TabTeleport:CreateButton({
+   Name = "Escanear y TP a Placas de Win",
+   Callback = function()
+       local found = false
+       for _, obj in pairs(workspace:GetDescendants()) do
+           if obj:IsA("BasePart") and (obj.Name:lower():find("win") or obj.Color == Color3.fromRGB(255, 255, 0)) then
+               LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+               found = true
+               break
+           end
+       end
+       if not found then
+           Rayfield:Notify({Title = "Error", Content = "No se encontraron placas de victoria cercanas.", Duration = 3})
+       end
+   end,
+})
 
 -- SECCIÓN JUGADOR
 TabPlayer:CreateSection("Mejoras de Jugador")
@@ -116,15 +109,22 @@ TabPlayer:CreateSlider({
    Flag = "WS_Slider",
    Callback = function(Value)
       S.WalkSpeed = Value
-      LP.Character.Humanoid.WalkSpeed = Value
+      if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+          LP.Character.Humanoid.WalkSpeed = Value
+      end
    end,
 })
 
 -- Mantener la velocidad al respawnear
-LP.CharacterAdded:Connect(function(char)
-    local hum = char:WaitForChild("Humanoid")
-    task.wait(0.5)
-    hum.WalkSpeed = S.WalkSpeed
+task.spawn(function()
+    while true do
+        pcall(function()
+            if LP.Character and LP.Character:FindFirstChild("Humanoid") and LP.Character.Humanoid.WalkSpeed ~= S.WalkSpeed then
+                LP.Character.Humanoid.WalkSpeed = S.WalkSpeed
+            end
+        end)
+        task.wait(1)
+    end
 end)
 
 -- SECCIÓN AUTO SHOP
@@ -137,13 +137,14 @@ TabMain:CreateToggle({
       task.spawn(function()
           while S.AutoShop do
               pcall(function()
-                  -- Intentar disparar remotos de compra comunes
-                  local remote = game:GetService("ReplicatedStorage"):FindFirstChild("Events") and game.ReplicatedStorage.Events:FindFirstChild("BuyUpgrade")
-                  if remote then
-                      remote:FireServer("Speed")
+                  local events = game:GetService("ReplicatedStorage"):FindFirstChild("Events") or game:GetService("ReplicatedStorage")
+                  for _, remote in pairs(events:GetChildren()) do
+                      if remote:IsA("RemoteEvent") and (remote.Name:lower():find("buy") or remote.Name:lower():find("upgrade")) then
+                          remote:FireServer("Speed")
+                      end
                   end
               end)
-              task.wait(1)
+              task.wait(2)
           end
       end)
    end,
